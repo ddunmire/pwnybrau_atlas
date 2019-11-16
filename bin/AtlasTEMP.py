@@ -106,7 +106,6 @@ def output_hec(value):
   # Format and send
 	#jsonDict = {'host': str(socket.gethostname()), 'event': 'metric', 'index': index, 'fields':{'ChamberTemp':str(value),'_value':str(value),'metric_name':'ChamberTemp'}}
 	jsonDict = {'host': str(socket.gethostname()), 'event': 'metric', 'index': index, 'fields':{'ChamberTemp':str(value),'_value':str(value),'metric_name':'ChamberTemp'}}
-	
 	r = requests.post(url,headers=authHeader,json=jsonDict,verify=False)
 
 def output_log(value: str):
@@ -126,27 +125,49 @@ def output(writeHere:str, measurement:str, unit:str):
 	if (writeHere == "LOG"):
 		output_log(formated_measurement)
 	elif (writeHere == "HEC"):
-		output_hec(measurement)
+		output_hec(formated_measurement)
 	else: #STDOUT
 		print(formated_measurement)
 
 def main():
 	###### Parse Arguements
-	parser = argparse.ArgumentParser(description='AtlasTEMP.py will poll an atlas scientific EZO-RTD Temperature circuit via i2c.')
+	parser = argparse.ArgumentParser(description='AtlasTEMP.py will poll an atlas scientific RTD Temperature circuit via i2c.')
 	parser.add_argument("--output", type=str, default="STDOUT", choices=list(["STDOUT","HEC","LOG"]), help="Where to output measurements: STDOUT, HEC, LOG. (Default: STDOUT)")
 	parser.add_argument("--logfile", default="./AtlasTEMP_UF.log", help="Sets file path into which output measurements are appended. Only used with --output=LOG.   (Default: ./AtlasTEMP_UF.log)")
 	#parser.add_argument("--loglevel", default="INFO", help="script logging level for messages (default: INFO) INFO, DEBUG, WARN, WARNING, ERROR")
 	parser.add_argument("--listentime", type=int, default=-1, help="How the script will run (in seconds) before exiting.  (default=-1 run forever)")
 	parser.add_argument("--sleeptime", type=float, default=1, help="How long to wait between measurement (in seconds) before exiting.  example: --sleeptime=.3 = 300ms (default=1s)")
-	parser.add_argument("--i2cbus", type=int, default=0, help="I2C Bus Number to query [integer] (example: /dev/i2c-X)  (default=0)")
+	parser.add_argument("--i2cbus", type=int, default=1, help="I2C Bus Number to query [integer] (example: /dev/i2c-X)  (default=0)")
 	parser.add_argument("--i2caddress", type=int, default=102, help="Device Address [integer] on the bus (example: 102 (hex 0x66) )  (default=102)")
 	parser.add_argument("--unit", type=str, default="c", choices=(["c", "f", "k"]), help="Set temperature unit of measure celcius, fahrenheit and kelvin [values: c, f or k] (default=c)")
 	args=parser.parse_args()
 
 	###### Create Atlas I2C object to read the RTD
-	device = AtlasI2C(address=AtlasI2C.default_address, bus=AtlasI2C.default_bus) 	# creates the I2C port object, specify the address or bus if necessary
-	q = "S,"+ str(args.unit).upper()
-	device.query(q)
+	#device = AtlasI2C(address=AtlasI2C.default_address, bus=AtlasI2C.default_bus) 	# creates the I2C port object, specify the address or bus if necessary
+	try:
+		device = AtlasI2C(address=args.i2caddress, bus=args.i2cbus) 	# creates the I2C port object, specify the address or bus if necessary
+	except FileNotFoundError as err:
+		errMsg = "ERROR:  I2C bus not found.  Verify existance of: " + err.filename
+		sys.exit(errMsg)
+
+	##### Device config
+	try:
+		##get Atlas EZO unit info
+		q = "i"
+		device_info=device.query(q)
+
+		###### Set Atlas EZO-RTD temperature unit
+		q = "S,"+ str(args.unit).upper()
+		device.query(q)
+	
+		#TODO:  Add calibration 
+	except OSError as err:
+		errMsg = err.strerror
+		errMsg += "\nThis typically happens when your I2C bus [{bus}] is not defined or device is not at the address [{address}]"
+		errMsg = errMsg.format(but=args.i2cbus, address=i2caddress)
+		sys.exit(errMsg)
+
+	
 
 
 	###### Define graceful exit
@@ -166,6 +187,8 @@ def main():
 			measurement = device.query("R")
 			output(args.output, measurement, args.unit)
 			time.sleep(args.sleeptime)
+
+	### output 
 	
 
 if __name__ == '__main__':
