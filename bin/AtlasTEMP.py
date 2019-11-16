@@ -106,7 +106,7 @@ def output_hec(value):
   # Format and send
 	#jsonDict = {'host': str(socket.gethostname()), 'event': 'metric', 'index': index, 'fields':{'ChamberTemp':str(value),'_value':str(value),'metric_name':'ChamberTemp'}}
 	jsonDict = {'host': str(socket.gethostname()), 'event': 'metric', 'index': index, 'fields':{'ChamberTemp':str(value),'_value':str(value),'metric_name':'ChamberTemp'}}
-	formated_measurement
+	
 	r = requests.post(url,headers=authHeader,json=jsonDict,verify=False)
 
 def output_log(value: str):
@@ -126,13 +126,13 @@ def output(writeHere:str, measurement:str, unit:str):
 	if (writeHere == "LOG"):
 		output_log(formated_measurement)
 	elif (writeHere == "HEC"):
-		output_hec(formated_measurement)
+		output_hec(measurement)
 	else: #STDOUT
 		print(formated_measurement)
 
 def main():
 	###### Parse Arguements
-	parser = argparse.ArgumentParser(description='AtlasTEMP.py will poll an atlas scientific RTD Temperature circuit via i2c.')
+	parser = argparse.ArgumentParser(description='AtlasTEMP.py will poll an atlas scientific EZO-RTD Temperature circuit via i2c.')
 	parser.add_argument("--output", type=str, default="STDOUT", choices=list(["STDOUT","HEC","LOG"]), help="Where to output measurements: STDOUT, HEC, LOG. (Default: STDOUT)")
 	parser.add_argument("--logfile", default="./AtlasTEMP_UF.log", help="Sets file path into which output measurements are appended. Only used with --output=LOG.   (Default: ./AtlasTEMP_UF.log)")
 	#parser.add_argument("--loglevel", default="INFO", help="script logging level for messages (default: INFO) INFO, DEBUG, WARN, WARNING, ERROR")
@@ -166,8 +166,6 @@ def main():
 			measurement = device.query("R")
 			output(args.output, measurement, args.unit)
 			time.sleep(args.sleeptime)
-
-	### output 
 	
 
 if __name__ == '__main__':
