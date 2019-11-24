@@ -137,7 +137,7 @@ def main():
 	parser.add_argument("--output", type=str, default="STDOUT", choices=list(["STDOUT","HEC","LOG"]), help="Where to output measurements: STDOUT, HEC, LOG. (Default: STDOUT)")
 	parser.add_argument("--logfile", default="./AtlasTEMP_UF.log", help="Sets file path into which output measurements are appended. Only used with --output=LOG.   (Default: ./AtlasTEMP_UF.log)")
 	#parser.add_argument("--loglevel", default="INFO", help="script logging level for messages (default: INFO) INFO, DEBUG, WARN, WARNING, ERROR")
-	parser.add_argument("--listentime", type=int, default=-1, help="How the script will run (in seconds) before exiting.  (default=-1 run forever)")
+	parser.add_argument("--listentime", type=float, default=-1, help="How the script will run (in seconds) before exiting.  (default=-1 run forever)")
 	parser.add_argument("--sleeptime", type=float, default=1, help="How long to wait between measurement (in seconds) before exiting.  example: --sleeptime=.3 = 300ms (default=1s)")
 	parser.add_argument("--i2cbus", type=int, default=1, help="I2C Bus Number to query [integer] (example: /dev/i2c-X)  (default=0)")
 	parser.add_argument("--i2caddress", type=int, default=102, help="Device Address [integer] on the bus (example: 102 (hex 0x66) )  (default=102)")
@@ -165,9 +165,8 @@ def main():
 	
 		#TODO:  Add calibration 
 	except OSError as err:
-		errMsg = err.strerror
-		errMsg += "\nThis typically happens when your I2C bus [{bus}] is not defined or device is not at the address [{address}]"
-		errMsg = errMsg.format(but=args.i2cbus, address=i2caddress)
+		errMsg = "ERROR: No device response from ths specified address: {address} on i2cbus: {bus}]"
+		errMsg = errMsg.format(bus=args.i2cbus, address=args.i2caddress)
 		sys.exit(errMsg)
 
 
