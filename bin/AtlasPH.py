@@ -143,7 +143,7 @@ def main():
 	parser.add_argument("--output", type=str, default="STDOUT", choices=list(["STDOUT","HEC","LOG"]), help="Where to output measurements: STDOUT, HEC, LOG. (Default: STDOUT)")
 	parser.add_argument("--logfile", default="./AtlasPH_UF.log", help="Sets file path into which output measurements are appended. Only used with --output=LOG.   (Default: ./AtlasPH_UF.log)")
 	#parser.add_argument("--loglevel", default="INFO", help="script logging level for messages (default: INFO) INFO, DEBUG, WARN, WARNING, ERROR")
-	parser.add_argument("--listentime", type=int, default=-1, help="How the script will run (in seconds) before exiting.  (default=-1 run forever)")
+	parser.add_argument("--listentime", type=float, default=-1, help="How the script will run (in seconds) before exiting.  (default=-1 run forever)")
 	parser.add_argument("--sleeptime", type=float, default=1, help="How long to wait between measurement (in seconds) before exiting.  example: --sleeptime=.3 = 300ms (default=1s)")
 	parser.add_argument("--i2cbus", type=int, default=1, help="I2C Bus Number to query [integer] (example: /dev/i2c-X)  (default=0)")
 	parser.add_argument("--i2caddress", type=int, default=99, help="Device Address [integer] on the bus (example: 99 (hex 0x63) )  (default=99)")
