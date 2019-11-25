@@ -112,16 +112,16 @@ def output_hec(value):
 	jsonDict = {'host': str(socket.gethostname()), 'event': 'metric', 'index': index, 'fields':{'PH':str(value),'_value':str(value),'metric_name':'PH'}}
 	r = requests.post(url,headers=authHeader,json=jsonDict,verify=False)
 
-def output_log(value: str):
+def output_log(logfilename:str, value: str):
 	# craft filename
 	today=datetime.date.today()
-	logfile = logfile=args.logfile + "." + str(today.year) + "." + str(today.month) + "." + str(today.day) + ".log"
+	logfile = logfilename + "." + str(today.year) + "." + str(today.month) + "." + str(today.day) + ".log"
 	#write to file
 	f = open(get_logfile(), "a")
 	f.write(msg + "\n")
 	f.close()
 
-def output(writeHere:str="STDOUT", measurement:str="NONE", showdeviceinfo:bool=False, deviceinfo:str="NONE"):
+def output(args:argparse.Namespace, measurement:str="NONE", showdeviceinfo:bool=False, deviceinfo:str="NONE"):
 	_timestamp=datetime.datetime.now(datetime.timezone.utc).isoformat()
 	if (showdeviceinfo):
 		_readingtemplate='{{"timestamp":"{time}", "PH":"{ph}", "Device":"{dev}"}}'
@@ -130,9 +130,9 @@ def output(writeHere:str="STDOUT", measurement:str="NONE", showdeviceinfo:bool=F
 		_readingtemplate='{{"timestamp":"{time}", "PH":"{ph}"}}'
 		formated_measurement=_readingtemplate.format(time=_timestamp, ph=measurement)
 
-	if (writeHere == "LOG"):
-		output_log(formated_measurement)
-	elif (writeHere == "HEC"):
+	if (args.output == "LOG"):
+		output_log(args.logfile, formated_measurement)
+	elif (args.output == "HEC"):
 		output_hec(measurement)
 	else: #STDOUT
 		print(formated_measurement)
@@ -141,7 +141,7 @@ def main():
 	###### Parse Arguements
 	parser = argparse.ArgumentParser(description='AtlasPH.py will poll an atlas scientific EZO-pH Temperature circuit via i2c.')
 	parser.add_argument("--output", type=str, default="STDOUT", choices=list(["STDOUT","HEC","LOG"]), help="Where to output measurements: STDOUT, HEC, LOG. (Default: STDOUT)")
-	parser.add_argument("--logfile", default="./AtlasPH_UF.log", help="Sets file path into which output measurements are appended. Only used with --output=LOG.   (Default: ./AtlasPH_UF.log)")
+	parser.add_argument("--logfile", default="./AtlasPH_UF", help="Sets file path into which output measurements are appended. Only used with --output=LOG.   (Default: ./AtlasPH_UF.log)")
 	#parser.add_argument("--loglevel", default="INFO", help="script logging level for messages (default: INFO) INFO, DEBUG, WARN, WARNING, ERROR")
 	parser.add_argument("--listentime", type=float, default=-1, help="How the script will run (in seconds) before exiting.  (default=-1 run forever)")
 	parser.add_argument("--sleeptime", type=float, default=1, help="How long to wait between measurement (in seconds) before exiting.  example: --sleeptime=.3 = 300ms (default=1s)")
@@ -152,7 +152,6 @@ def main():
 
 	###### Create Atlas I2C object to read the RTD
 	device_info = ""
-	#device = AtlasI2C(address=AtlasI2C.default_address, bus=AtlasI2C.default_bus) 	# creates the I2C port object, specify the address or bus if necessary
 	try:
 		device = AtlasI2C(address=args.i2caddress, bus=args.i2cbus) 	# creates the I2C port object, specify the address or bus if necessary
 	except FileNotFoundError as err:
@@ -184,14 +183,14 @@ def main():
 		#loop forever
 		while True:
 			measurement = device.query("R")
-			output(args.output, measurement, args.show_device_info, device_info)
+			output(args, measurement, args.show_device_info, device_info)
 			time.sleep(args.sleeptime)
 	else:
 		time2stop = datetime.datetime.now().timestamp() + args.listentime
 		
 		while (datetime.datetime.now().timestamp() < time2stop):  # loop until time is exceeded 
 			measurement = device.query("R")
-			output(args.output, measurement, args.show_device_info, device_info)
+			output(args, measurement, args.show_device_info, device_info)
 			time.sleep(args.sleeptime)
 	
 if __name__ == '__main__':
