@@ -7,7 +7,7 @@
 #    Sample output:  {"timestamp":"2019-11-15T21:45:21.400057+00:00", "ChamberTemp":"78.919", "Unit":"f"}
 #
 export output="STDOUT"            # output destination: STDOUT, LOG or HEC
-#export logfile="pwnybrau_ph.log" # USED only with output=LOG
+#export logfile="pwnybrau_temp"   # USED only with output=LOG
 export listentime=1               # total time to take measurements (note -1 = infinity)
 export sleeptime=1                # time to wait between measurements
 export unit="f"                   # temperature unit: c,f or k
