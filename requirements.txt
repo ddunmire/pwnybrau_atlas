@@ -1,2 +1,2 @@
-# dependent packages
-atlas-i2c
+#  List of required packages
+atlas-i2c==0.3.1
