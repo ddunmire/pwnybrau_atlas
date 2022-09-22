@@ -22,7 +22,7 @@ def main():
 	###### Parse Arguements
 	parser = argparse.ArgumentParser(description='AtlasTEMP.py will poll an atlas scientific RTD Temperature circuit via i2c.  Note: pH Measurements will take approx 1second each.')
 	parser.add_argument("--output", type=str, default="STDOUT", choices=publish_types, help="Where to output measurements: (Default: STDOUT)".join(publish_types))
-	parser.add_argument("--output_config", type=str, default="output.conf", help="Path and file name of the config file with our output params.  Used with LOG, MQTT and HEC")
+	parser.add_argument("--output_config", type=str, default="publish.conf", help="Path and file name of the config file with our output params.  Used with LOG, MQTT and HEC")
 	#parser.add_argument("--logfile", default="./AtlasTemp", help="Sets file path into which output measurements are appended. Only used with --output=LOG.   (Default: ./AtlasTEMP.[year].[day].log)")
 	#parser.add_argument("--loglevel", default="INFO", help="script logging level for messages (default: INFO) INFO, DEBUG, WARN, WARNING, ERROR")
 	parser.add_argument("--listentime", type=float, default=-1, help="How the script will run (in seconds) before exiting.  (default=-1 run forever)\nNote: Pulling a reading from a Sensors can take 2seconds.")
