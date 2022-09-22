@@ -15,14 +15,15 @@ import string     	# helps parse strings
 import os
 import sys
 
-from pwnybrau_library.publisher import publish
+from pwnybrau_library.publisher import publish_types, publish
 from atlas_i2c import sensors, commands
 
 def main():
 	###### Parse Arguements
 	parser = argparse.ArgumentParser(description='AtlasPH.py will poll an atlas scientific EZO-pH Temperature circuit via i2c.')
-	parser.add_argument("--output", type=str, default="STDOUT", choices=list(["STDOUT","HEC","LOG"]), help="Where to output measurements: STDOUT, HEC, LOG. (Default: STDOUT)")
-	parser.add_argument("--logfile", default="./AtlasPH_UF", help="Sets file path into which output measurements are appended. Only used with --output=LOG.   (Default: ./AtlasPH_UF.log)")
+	parser.add_argument("--output", type=str, default="STDOUT", choices=publish_types, help="Where to output measurements: STDOUT, HEC, LOG. (Default: STDOUT)".join(publish_types))
+	parser.add_argument("--output_config", type=str, default="output.conf", help="Path and file name of the config file with our output params.  Used with LOG, MQTT and HEC")
+	#parser.add_argument("--logfile", default="./AtlasPH", help="Sets file path into which output measurements are appended. Only used with --output=LOG.   (Default: ./AtlasPH.[year].[day].log)")
 	#parser.add_argument("--loglevel", default="INFO", help="script logging level for messages (default: INFO) INFO, DEBUG, WARN, WARNING, ERROR")
 	parser.add_argument("--listentime", type=float, default=-1, help="How the script will run (in seconds) before exiting.  (default=-1 run forever)")
 	parser.add_argument("--sleeptime", type=float, default=1, help="How long to wait between measurement (in seconds) before exiting.  example: --sleeptime=.3 = 300ms (default=1s)")
@@ -33,7 +34,7 @@ def main():
 	args=parser.parse_args()
 
 	###### Create Atlas I2C object to read the RTD
-	deviceInfo = ""
+	deviceInfo = "NONE"
 	sensor = ""
 
 	try:
