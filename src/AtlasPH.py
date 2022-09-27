@@ -15,13 +15,14 @@ import string     	# helps parse strings
 import os
 import sys
 
-from pwnybrau_library.publisher import publish_types, publish
+from pwnybrau_library.publisherfactory import PublisherFactory
+from pwnybrau_library.publisher import Publisher
 from atlas_i2c import sensors, commands
 
 def main():
 	###### Parse Arguements
 	parser = argparse.ArgumentParser(description='AtlasPH.py will poll an atlas scientific EZO-pH Temperature circuit via i2c.')
-	parser.add_argument("--output", type=str, default="STDOUT", choices=publish_types, help="Where to output measurements: STDOUT, HEC, LOG. (Default: STDOUT)".join(publish_types))
+	parser.add_argument("--output", type=str, default="STDOUT", choices=PublisherFactory.PublisherTypes, help="Where to output measurements: (Default: STDOUT)".join(PublisherFactory.PublisherTypes))
 	parser.add_argument("--output_config", type=str, default="publish.conf", help="Path and file name of the config file with our output params.  Used with LOG, MQTT and HEC")
 	#parser.add_argument("--logfile", default="./AtlasPH", help="Sets file path into which output measurements are appended. Only used with --output=LOG.   (Default: ./AtlasPH.[year].[day].log)")
 	#parser.add_argument("--loglevel", default="INFO", help="script logging level for messages (default: INFO) INFO, DEBUG, WARN, WARNING, ERROR")
@@ -36,9 +37,9 @@ def main():
 	###### Create Atlas I2C object to read the RTD
 	deviceInfo = "NONE"
 	sensor = ""
+	outputter:Publisher = PublisherFactory.factory(args)
 
 	try:
-		#device = AtlasI2C(address=args.i2caddress, bus=args.i2cbus) 	# creates the I2C port object, specify the address or bus if necessary
 		sensor = sensors.Sensor("pH", address=args.i2caddress)  #TODO: add bus
 		sensor.client.bus = args.i2cbus	
 		sensor.client.device_file.close()							
@@ -91,7 +92,7 @@ def main():
 			formated_measurement=_readingtemplate.format(time=timestamp, name=args.name, measurement=measurement)
 
 		#publish results.
-		publish(formated_measurement, args)
+		outputter.publish(formated_measurement)
 
 		time.sleep(args.sleeptime)
 

@@ -15,13 +15,14 @@ import string    	# helps parse strings
 import os
 import sys
 
-from pwnybrau_library.publisher import publish, publish_types
+from pwnybrau_library.publisherfactory import PublisherFactory
+from pwnybrau_library.publisher import Publisher
 from atlas_i2c import sensors, commands
 
 def main():
 	###### Parse Arguements
 	parser = argparse.ArgumentParser(description='AtlasTEMP.py will poll an atlas scientific RTD Temperature circuit via i2c.  Note: pH Measurements will take approx 1second each.')
-	parser.add_argument("--output", type=str, default="STDOUT", choices=publish_types, help="Where to output measurements: (Default: STDOUT)".join(publish_types))
+	parser.add_argument("--output", type=str, default="STDOUT", choices=PublisherFactory.PublisherTypes, help="Where to output measurements: (Default: STDOUT)".join(PublisherFactory.PublisherTypes))
 	parser.add_argument("--output_config", type=str, default="publish.conf", help="Path and file name of the config file with our output params.  Used with LOG, MQTT and HEC")
 	#parser.add_argument("--logfile", default="./AtlasTemp", help="Sets file path into which output measurements are appended. Only used with --output=LOG.   (Default: ./AtlasTEMP.[year].[day].log)")
 	#parser.add_argument("--loglevel", default="INFO", help="script logging level for messages (default: INFO) INFO, DEBUG, WARN, WARNING, ERROR")
@@ -37,10 +38,10 @@ def main():
 	###### Create Atlas I2C object to read the RTD
 	deviceInfo = "NONE"
 	sensor = ""
+	outputter:Publisher = PublisherFactory.factory(args)
 	
 	# Define Sensor object 
 	try:
-		# device = atlas_i2c.AtlasI2C(address=args.i2caddress, bus=args.i2cbus) 	# creates the I2C port object, specify the address or bus if necessary
 		sensor = sensors.Sensor("temp", address=args.i2caddress)  #TODO: add bus to sensor.
 		sensor.client.bus = args.i2cbus	
 		sensor.client.device_file.close()							
@@ -94,7 +95,7 @@ def main():
 			formated_measurement=_readingtemplate.format(time=timestamp, name=args.name, measurement=measurement, unit=unit)
 
 		#publish results.
-		publish(formated_measurement, args)
+		outputter.publish(formated_measurement)
 
 		time.sleep(args.sleeptime)
 
