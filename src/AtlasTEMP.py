@@ -22,7 +22,7 @@ from atlas_i2c import sensors, commands
 def main():
 	###### Parse Arguements
 	parser = argparse.ArgumentParser(description='AtlasTEMP.py will poll an atlas scientific RTD Temperature circuit via i2c.  Note: pH Measurements will take approx 1second each.')
-	parser.add_argument("--output", type=str, default="STDOUT", choices=PublisherFactory.PublisherTypes, help="Where to output measurements: (Default: STDOUT)".join(PublisherFactory.PublisherTypes))
+	parser.add_argument("--output", type=str, default="STDOUT", choices=PublisherFactory.PublisherTypes, help="Where to output measurements: (Default: STDOUT)")
 	parser.add_argument("--output_config", type=str, default="publish.conf", help="Path and file name of the config file with our output params.  Used with LOG, MQTT and HEC")
 	#parser.add_argument("--logfile", default="./AtlasTemp", help="Sets file path into which output measurements are appended. Only used with --output=LOG.   (Default: ./AtlasTEMP.[year].[day].log)")
 	#parser.add_argument("--loglevel", default="INFO", help="script logging level for messages (default: INFO) INFO, DEBUG, WARN, WARNING, ERROR")
@@ -35,10 +35,12 @@ def main():
 	parser.add_argument("--name", type=str, default="AtlasRTD", help="Sensor Name.")
 	args=parser.parse_args()
 
+	# define outputter
+	outputter:Publisher = PublisherFactory.factory(args)
+
 	###### Create Atlas I2C object to read the RTD
 	deviceInfo = "NONE"
 	sensor = ""
-	outputter:Publisher = PublisherFactory.factory(args)
 	
 	# Define Sensor object 
 	try:
