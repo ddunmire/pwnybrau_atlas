@@ -37,7 +37,7 @@ Visit [Atlas Scientific](https://atlas-scientific.com/) for details on exact i2c
 
 
 ## Supported Outputs
-  - **STDOUT** - sensor data is send to standard out.   
+  -**STDOUT** - sensor data is send to standard out.   
 
   - __LOG__ - sensor data is written to a logfile named on the cli.
 
@@ -54,7 +54,7 @@ Visit [Atlas Scientific](https://atlas-scientific.com/) for details on exact i2c
     $ python3 AtlasTemp --name=temp --show_device_info
     output:
       {"timestamp":"2023-01-21T01:56:15.094778+00:00", "name":"FermenterTemp", "measurement":"69.428", "unit":"f", "sensor":{"type":"RTD", "firmware":2.10}}
-    ```
+```
 
 
 ## Help
@@ -92,8 +92,10 @@ optional arguments:
 
 ## Examples
 See pwnybrau_atlas/examples
+
 ### Logfile
 This example outputs sensor measurements to a log file.
+
 ### Splunk Universal Forwarder (SplunkUF)
 This example is a Splunk Scripted Input for a Universal Forwarder. Splunk captures sensor measurements via STDOUT and passes them to the Indexers for parsing.
 Note: No props or transforms at this time.  Sorry. 
