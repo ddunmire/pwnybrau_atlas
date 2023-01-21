@@ -37,7 +37,7 @@ Visit [Atlas Scientific](https://atlas-scientific.com/) for details on exact i2c
 
 
 ## Supported Outputs
-  -**STDOUT** - sensor data is send to standard out.   
+  - **STDOUT** - sensor data is send to standard out.   
 
   - __LOG__ - sensor data is written to a logfile named on the cli.
 
