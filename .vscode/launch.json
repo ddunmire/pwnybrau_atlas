@@ -1,0 +1,39 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python: Current File",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Python: AtlasTEMP",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/src/AtlasTEMP.py",
+            "console": "integratedTerminal",
+            //"args": ["--name=FermenterTemp", "--output_config=./src/publish.conf", "--listentime=-1","--sleeptime=3","--show_device_info", ]
+            "args": ["--name=FermenterTemp", "--output=MQTT", "--output_config=./src/publish.conf", "--listentime=15","--sleeptime=3","--show_device_info", ]
+            //"args": ["--name=FermenterTemp", "--listentime=5","--sleeptime=3","--show_device_info"]
+            //"args":["--name=FermenterTemp", "--show_device_info","--i2cbus=1"]
+            //"args": ["--help"]
+        },
+        {
+            "name": "Python: AtlasPH",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/src/AtlasPH.py",
+            "console": "integratedTerminal",
+            //"args": ["--name=FermenterPH", "--output=LOG", "--output_config=./src/publish.conf","--listentime=-1","--sleeptime=3","--show_device_info"]
+            "args": ["--name=FermenterPH", "--output=MQTT", "--output_config=./src/publish.conf","--listentime=15","--sleeptime=3","--show_device_info"]
+            //"args": ["--name=FermenterPH", "--listentime=5","--sleeptime=3","--show_device_info"]
+            //"args":["--name=FermenterPH", "--show_device_info","--i2cbus=1"]
+            //"args": ["--help"]
+        }
+    ]
+}
