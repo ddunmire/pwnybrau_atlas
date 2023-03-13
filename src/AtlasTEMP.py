@@ -32,7 +32,7 @@ def main():
 	parser.add_argument("--i2caddress", type=int, default=102, help="Device Address [integer] on the bus (example: 102 (hex 0x66) )  (default=102)")
 	parser.add_argument("--unit", type=str, default="f", choices=(["c", "f", "k"]), help="Set temperature unit of measure celcius, fahrenheit and kelvin [values: c, f or k] (default=c)")
 	parser.add_argument("--show_device_info", default=False, action='store_true', help="Optional Flag: Display device info is set.")
-	parser.add_argument("--name", type=str, default="AtlasRTD", help="Sensor Name.")
+	parser.add_argument("--name", type=str, default="AtlasRTD", help="Sensor Name. (default=AtlasRTD)")
 	args=parser.parse_args()
 
 	# define outputter

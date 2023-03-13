@@ -1,63 +1,26 @@
 # Pwnybrau_Atlas 
 In the project, I am creating python scripts that makes it easier to read Atlas sensors via an I2C bus and write them to an standardout or a supported endpoint.
 
+## Global Prereqs:
+### Unix
+Application | version | notes
+----------- | ------- | -----
+python3 | 3.7.3+ | you gotta have python
+pip3    | 23.0.1+ | used to install python dependencies  
 
 ## Dependencies
 Python Package Name | version | install | website
 ------------------- | ------- | ------- | -------
-atlas-i2c | 0.3.1 | pip install atlas-i2c | https://pypi.org/project/atlas-i2c/ <br /> https://github.com/timboring/atlas_i2c     
-
-## I2C validation
-This project expects that sensors to be wired to an I2C bus and directly connected to the host running this code.  Below are a few steps you can take to be sure your I2C bus is mounted and working properly.
-
-### List I2C buses
-```
-  $ ls -al /dev/i2c*
-  output:
-  crw-rw---- 1 root i2c 89, 1 Jan 19 10:20 /dev/i2c-1
-
-```
-### Probe I2C bus to see 
-```
-  # Probe i2c-1
-  $ i2cdetect -y 1
-  output:
-       0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f
-  00:          -- -- -- -- -- -- -- -- -- -- -- -- --
-  10: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  20: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  30: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  40: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  50: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  60: -- -- -- 63 -- -- 66 -- -- -- -- -- -- -- -- --
-```
-Visit [Atlas Scientific](https://atlas-scientific.com/) for details on exact i2c bus addresses for your sensors.
-    EZO pH Sensor defaults to 0x63 (99)
-    EZO RTD Temperature defaults to   0x66 (102)
-
+atlas-i2c | 0.3.1 | pip install atlas-i2c | https://pypi.org/project/atlas-i2c/ <br /> https://github.com/timboring/atlas_i2c   
+paho-mqtt | 1.6.1+| pip install paho-mqtt | https://pypi.org/project/paho-mqtt/ <br /> https://www.eclipse.org/paho/
 
 ## Supported Outputs
   - **STDOUT** - sensor data is send to standard out.   
-
   - __LOG__ - sensor data is written to a logfile named on the cli.
-
   - **MQTT** - sensor measurements are published to a MQTT broker defined a config file.
-
   - __HEC__ - [FUTURE]  not quit ready to build this one yet.
 
-## CLI and Sample Output
-```
-    $ python3 AtlasPH --name=ph --show_device_info 
-    output:
-      {"timestamp":"2023-01-21T02:02:18.047372+00:00", "name":"FermenterPH", "measurement":"4.509", "Device":{"type":"pH", "firmware":2.12}}
-
-    $ python3 AtlasTemp --name=temp --show_device_info
-    output:
-      {"timestamp":"2023-01-21T01:56:15.094778+00:00", "name":"FermenterTemp", "measurement":"69.428", "unit":"f", "sensor":{"type":"RTD", "firmware":2.10}}
-```
-
-
-## Help
+## Usage
 ```
 $ python3 AtlasPH.py --help
 usage: AtlasPH.py [-h] [--output {STDOUT,LOG,HEC,MQTT}]
@@ -90,6 +53,17 @@ optional arguments:
   --name NAME           Sensor Name.
 ```
 
+### CLI and Sample Output
+```
+    $ python3 AtlasPH.py --name=ph --show_device_info 
+    output:
+      {"timestamp":"2023-01-21T02:02:18.047372+00:00", "name":"FermenterPH", "measurement":"4.509", "Device":{"type":"pH", "firmware":2.12}}
+
+    $ python3 AtlasTemp.py --name=temp --show_device_info
+    output:
+      {"timestamp":"2023-01-21T01:56:15.094778+00:00", "name":"FermenterTemp", "measurement":"69.428", "unit":"f", "sensor":{"type":"RTD", "firmware":2.10}}
+```
+
 ## Examples
 See pwnybrau_atlas/examples
 
@@ -99,5 +73,39 @@ This example outputs sensor measurements to a log file.
 ### Splunk Universal Forwarder (SplunkUF)
 This example is a Splunk Scripted Input for a Universal Forwarder. Splunk captures sensor measurements via STDOUT and passes them to the Indexers for parsing.
 Note: No props or transforms at this time.  Sorry. 
+1. Install Splunk Univeral Forwarder  \
+     (https://docs.splunk.com/Documentation/Forwarder/8.0.0/Forwarder/Installanixuniversalforwarder)  
+2. Configure your Universal Forwarder to connect to your Splunk Indexers
 
+### Configure UF to use pwnybrau_tilt     
+1. create symbolic link so pwnybrau_tilt is app under splunk \
+    ln -s /opt/pwnybrau_tilt /opt/splunkforwarder/etc/apps/pwnybrau_tilt
+2. restart splunk
 
+## I2C validation
+This project expects that sensors to be wired to an I2C bus and directly connected to the host running this code.  Below are a few steps you can take to be sure your I2C bus is mounted and working properly.
+
+### List I2C buses
+```
+  $ ls -al /dev/i2c*
+  output:
+  crw-rw---- 1 root i2c 89, 1 Jan 19 10:20 /dev/i2c-1
+
+```
+### Probe I2C bus for sensors/devices 
+```
+  # Probe i2c-1
+  $ i2cdetect -y 1
+  output:
+       0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f
+  00:          -- -- -- -- -- -- -- -- -- -- -- -- --
+  10: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  20: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  30: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  40: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  50: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  60: -- -- -- 63 -- -- 66 -- -- -- -- -- -- -- -- --
+```
+Visit [Atlas Scientific](https://atlas-scientific.com/) for details on exact i2c bus addresses for your sensors.
+    EZO pH Sensor defaults to 0x63 (99)
+    EZO RTD Temperature defaults to   0x66 (102)
