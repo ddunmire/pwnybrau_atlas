@@ -1,9 +1,9 @@
 [Unit]
-Description=Read Atlas Temperature metric from i2c bus and publish it.  See atlas_temp_pub2edge.sh for details on where.
+Description=Read Atlas Temperature metric from i2c bus and publish it.  See atlas_temp_pub2mqtt.sh for details on where.
 
 [Service]
 WorkingDirectory=/opt/pwnybrau/pwnybrau_atlas/examples/mqtt/bin
-ExecStart=/bin/bash /opt/pwnybrau/pwnybrau_atlas/examples/mqtt/bin/atlas_temp_pub2edge.sh
+ExecStart=/bin/bash /opt/pwnybrau/pwnybrau_atlas/examples/mqtt/bin/atlas_temp_pub2mqtt.sh
 
 Restart=always
 RestartSec=10
