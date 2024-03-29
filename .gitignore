@@ -1,0 +1,6 @@
+.vscode/settings.json
+pwnybrau_atlas.code-workspace
+certs
+AtlasSensors.*.log
+SplunkUF to SCS
+tests/atlas.conf

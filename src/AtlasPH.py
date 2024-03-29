@@ -31,7 +31,7 @@ def main():
 	parser.add_argument("--i2cbus", type=int, default=1, help="I2C Bus Number to query [integer] (example: /dev/i2c-X)  (default=0)")
 	parser.add_argument("--i2caddress", type=int, default=99, help="Device Address [integer] on the bus (example: 99 (hex 0x63) )  (default=99)")
 	parser.add_argument("--show_device_info", default=False, action='store_true', help="Optional Flag: Display device info is set.")
-	parser.add_argument("--name", type=str, default="AtlasPH", help="Sensor Name.")
+	parser.add_argument("--name", type=str, default="AtlasPH", help="Sensor Name. (default=AtlasPH)")
 	args=parser.parse_args()
 
 	# define outputter
