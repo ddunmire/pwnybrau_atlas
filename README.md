@@ -10,8 +10,9 @@ atlas-i2c | 0.3.1 | pip install atlas-i2c | https://pypi.org/project/atlas-i2c/ 
 
 
 ## Suported Endpoints
-__stdout__ - just dump output to standard out.   
+__stdout__  - just dump output to standard out.   
 __LogFile__ - dump output to a logfile named on the cli
+__MQTT__    - send output to an MQTT broker defined in the config file.
 
 
 ## Example Usage
