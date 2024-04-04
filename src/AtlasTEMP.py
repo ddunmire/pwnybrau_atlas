@@ -94,7 +94,7 @@ def main():
 			formated_measurement=_readingtemplate.format(time=timestamp, name=args.name, temp=measurement, unit=unit, dev=deviceInfo)
 		else:
 			_readingtemplate='{{"timestamp":"{time}", "name":"{name}", "measurement":"{temp}", "unit":"{unit}"}}'
-			formated_measurement=_readingtemplate.format(time=timestamp, name=args.name, measurement=measurement, unit=unit)
+			formated_measurement=_readingtemplate.format(time=timestamp, name=args.name, temp=measurement, unit=unit)
 
 		#publish results.
 		outputter.publish(formated_measurement)
